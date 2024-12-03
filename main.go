@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/jorgepbrown/aoc2024/day1"
+	"github.com/jorgepbrown/aoc2024/day3"
 )
 
 var (
@@ -27,6 +28,12 @@ func main() {
 			fmt.Println(day1.SolvePart1(i))
 		} else {
 			fmt.Println(day1.SolvePart2(i))
+		}
+	case 3:
+		if *part == 1 {
+			fmt.Println(day3.SolvePart1(i))
+		} else {
+			fmt.Println(day3.SolvePart2(i))
 		}
 	}
 }
