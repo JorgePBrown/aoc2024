@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/jorgepbrown/aoc2024/day1"
+	"github.com/jorgepbrown/aoc2024/day10"
 	"github.com/jorgepbrown/aoc2024/day3"
 	"github.com/jorgepbrown/aoc2024/day4"
 	"github.com/jorgepbrown/aoc2024/day5"
@@ -76,6 +77,12 @@ func main() {
 			fmt.Println(day9.SolvePart1(i))
 		} else {
 			fmt.Println(day9.SolvePart2(i))
+		}
+	case 10:
+		if *part == 1 {
+			fmt.Println(day10.SolvePart1(i))
+		} else {
+			fmt.Println(day10.SolvePart2(i))
 		}
 	}
 }
