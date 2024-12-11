@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"text/template"
 
 	"github.com/jorgepbrown/aoc2024/day1"
 	"github.com/jorgepbrown/aoc2024/day10"
@@ -18,8 +19,9 @@ import (
 )
 
 var (
-	day  = flag.Uint("day", 0, "--day=1")
-	part = flag.Uint("part", 0, "--part=1|2")
+	initDay = flag.Bool("init", false, "--init")
+	day     = flag.Uint("day", 0, "--day=1")
+	part    = flag.Uint("part", 0, "--part=1|2")
 )
 
 func main() {
@@ -27,6 +29,14 @@ func main() {
 	if *day == 0 {
 		panic("day must be greater than 0")
 	}
+
+	if *initDay {
+		if *day != 0 {
+			setupDay(*day)
+		}
+		return
+	}
+
 	i, c := mustLoadInput(*day)
 	defer c()
 	switch *day {
@@ -93,4 +103,97 @@ func mustLoadInput(day uint) (io.Reader, func() error) {
 		panic(err)
 	}
 	return f, f.Close
+}
+
+type TemplateInfo struct {
+	Day uint
+}
+
+func setupDay(day uint) {
+	err := os.Mkdir(fmt.Sprintf("day%d", day), 0777)
+	if err != nil {
+		panic(err)
+	}
+
+	ti := TemplateInfo{
+		day,
+	}
+
+	ft, err := template.New("source file").Parse(`package day{{.Day}}
+
+import "io"
+
+func SolvePart1(r io.Reader) (int, error) {
+	return 0, nil
+}
+func SolvePart2(r io.Reader) (int, error) {
+	return 0, nil
+}`)
+
+	if err != nil {
+		panic(err)
+	}
+
+	sourceF, err := os.Create(fmt.Sprintf("./day%d/day%d.go", day, day))
+	if err != nil {
+		panic(err)
+	}
+
+	err = ft.Execute(sourceF, &ti)
+	if err != nil {
+		panic(err)
+	}
+
+	ft, err = template.New("test file").Parse(`package day{{.Day}}
+
+import (
+	"testing"
+	"strings"
+)
+
+func TestPart1(t *testing.T) {
+	input := strings.NewReader("")
+
+	expected := 0
+
+	actual, err := SolvePart1(input)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if actual != expected {
+		t.Fatalf("expected=%d got=%d", expected, actual)
+	}
+}
+
+func TestPart2(t *testing.T) {
+	input := strings.NewReader("")
+
+	expected := 0
+
+	actual, err := SolvePart2(input)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if actual != expected {
+		t.Fatalf("expected=%d got=%d", expected, actual)
+	}
+}`)
+
+	if err != nil {
+		panic(err)
+	}
+
+	sourceF, err = os.Create(fmt.Sprintf("./day%d/day%d_test.go", day, day))
+	if err != nil {
+		panic(err)
+	}
+
+	err = ft.Execute(sourceF, ti)
+	if err != nil {
+		panic(err)
+	}
 }
